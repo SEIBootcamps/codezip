@@ -1,14 +1,13 @@
 [tool.poetry]
 name = "codezip"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = ["Ashley Trinh <itsashley@hey.com>"]
 readme = "README.md"
-packages = [{include = "codezip", from = "src"}]
+packages = [{ include = "codezip", from = "src" }]
 
 [tool.poetry.dependencies]
-python = "^3.11"
-
+python = "^3.10"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.3.1"
