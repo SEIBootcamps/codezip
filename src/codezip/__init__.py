@@ -6,14 +6,13 @@ Create .zip archives of lecture demos, starter code for lab exercises, etc.
 from typing import TYPE_CHECKING
 from pathlib import Path
 from zipfile import ZipFile
-import os
 
 import igittigitt
 
-from . import gitutils
+from . import gitutils, fileutils
 
 if TYPE_CHECKING:
-    from typing import Callable, Pathlike, Generator
+    from typing import Pathlike
 
 ignore_parser = igittigitt.IgnoreParser()
 
@@ -38,26 +37,5 @@ def zip_code(
         return not gitignored and not ignore_parser.match(file)
 
     with ZipFile(zip_name, "w") as zfile:
-        for f in _get_matching_files(target_dir, filter_files):
-            print(f)
+        for f in fileutils.get_matching_files(target_dir, filter_files):
             zfile.write(f.resolve(), f.relative_to(target_dir))
-
-
-def _get_matching_files(
-    rootdir: "Pathlike", filter_fn: "Callable[[Pathlike], bool]"
-) -> "Generator[Path, None, None]":
-    """Yield all files in a directory matching a filter function."""
-
-    if not os.path.isdir(rootdir):
-        raise ValueError(f"{rootdir} is not a directory")
-
-    for root, dirs, files in os.walk(rootdir, topdown=True):
-        for i, d in enumerate([Path(root) / _d for _d in dirs]):
-            if filter_fn(d):
-                yield d
-            else:
-                del dirs[i]
-
-        for f in [Path(root) / _f for _f in files]:
-            if filter_fn(f):
-                yield f
