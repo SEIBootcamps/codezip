@@ -26,10 +26,16 @@ def zip_code(
     ignore_parser.parse_rule_files(base_dir=target_dir, filename=ignore_file)
     ignore_parser.add_rule(".codezipignore", base_path=target_dir)
 
+    is_git_repo = gitutils.is_git_repo(target_dir)
+
     def filter_files(file: Path) -> bool:
-        is_gitignored = gitutils.is_ignored_by_git(file, cwd=target_dir)
-        is_codezipignored = ignore_parser.match(file)
-        return not is_gitignored and not is_codezipignored
+        """Filter out files that ignored by .gitignore or .codezipignore."""
+
+        gitignored = False
+        if is_git_repo:
+            gitignored = gitutils.is_ignored_by_git(file, cwd=target_dir)
+
+        return not gitignored and not ignore_parser.match(file)
 
     with ZipFile(zip_name, "w") as zfile:
         for f in _get_matching_files(target_dir, filter_files):
@@ -48,9 +54,9 @@ def _get_matching_files(
     for root, dirs, files in os.walk(rootdir, topdown=True):
         for i, d in enumerate([Path(root) / _d for _d in dirs]):
             if filter_fn(d):
-                del dirs[i]
-            else:
                 yield d
+            else:
+                del dirs[i]
 
         for f in [Path(root) / _f for _f in files]:
             if filter_fn(f):
