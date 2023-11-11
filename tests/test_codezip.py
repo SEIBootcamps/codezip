@@ -17,11 +17,12 @@ def test_zip_code(example_dir: Path) -> None:
     zip_code(zip_to, example_dir)
 
     with ZipFile(zip_to) as zfile:
-        assert ".ignore_me/" not in zfile.namelist()
-        assert ".ignore_me/ignore_me_too.txt" not in zfile.namelist()
-        assert "include_me/but_ignore_me.txt" not in zfile.namelist()
-        assert "ignore_this_file.txt" not in zfile.namelist()
+        zipped_files = zfile.namelist()
+        assert ".ignore_me/" not in zipped_files
+        assert ".ignore_me/ignore_me_too.txt" not in zipped_files
+        assert "include_me/but_ignore_me.txt" not in zipped_files
+        assert "ignore_this_file.txt" not in zipped_files
 
-        assert "include_me/" in zfile.namelist()
-        assert "include_me/include_me_too.txt" in zfile.namelist()
-        assert "include_me.txt" in zfile.namelist()
+        assert "include_me/" in zipped_files
+        assert "include_me/include_me_too.txt" in zipped_files
+        assert "include_me.txt" in zipped_files
