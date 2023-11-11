@@ -6,14 +6,13 @@ from codezip import zip_code
 
 
 @pytest.fixture(scope="function")
-def tests_dir() -> Path:
-    """Return the path to the tests directory."""
+def example_dir() -> Path:
+    """Return the path to the tests/example directory."""
 
-    return Path(__file__).parent
+    return Path(__file__).parent / "example"
 
 
-def test_zip_code(tests_dir: Path) -> None:
-    example_dir = tests_dir / "example"
+def test_zip_code(example_dir: Path) -> None:
     zip_to = example_dir / "example.zip"
     zip_code(zip_to, example_dir)
 
