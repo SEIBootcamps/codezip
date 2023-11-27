@@ -17,12 +17,14 @@ def get_matching_files(
         raise ValueError(f"{rootdir} is not a directory")
 
     for root, dirs, files in os.walk(rootdir, topdown=True):
-        for i, d in enumerate([Path(root) / _d for _d in dirs]):
-            if filter_fn(d):
-                yield d
+        for d in dirs:
+            full_dir_path = Path(root) / d
+            if filter_fn(full_dir_path):
+                yield full_dir_path
             else:
-                del dirs[i]
+                del dirs[dirs.index(d)]
 
-        for f in [Path(root) / _f for _f in files]:
-            if filter_fn(f):
-                yield f
+        for f in files:
+            full_file_path = Path(root) / f
+            if filter_fn(full_file_path):
+                yield full_file_path
