@@ -7,23 +7,25 @@ from typing import TYPE_CHECKING
 from pathlib import Path
 from zipfile import ZipFile
 
-import igittigitt
-
-from . import gitutils, fileutils
+from . import gitutils, fileutils, ignoreparser
 
 if TYPE_CHECKING:
-    from typing import Pathlike
+    from typing import Pathlike, Optional, List
 
-ignore_parser = igittigitt.IgnoreParser()
+ignore_parser = ignoreparser.create_ignore_parser()
 
 
 def zip_code(
-    zip_name: str, target_dir: "Pathlike", ignore_file: "Pathlike" = ".codezipignore"
+    zip_name: str,
+    target_dir: "Pathlike",
+    ignore_file: "Pathlike" = ".codezipignore",
+    additional_ignore_patterns: "Optional[List[str]]" = None,
 ) -> None:
     """Use this to archive code for students to download."""
 
-    ignore_parser.parse_rule_files(base_dir=target_dir, filename=ignore_file)
-    ignore_parser.add_rule(".codezipignore", base_path=target_dir)
+    ignoreparser.init_ignore_parser(
+        ignore_parser, target_dir, ignore_file, additional_ignore_patterns
+    )
 
     is_git_repo = gitutils.is_git_repo(target_dir)
 
