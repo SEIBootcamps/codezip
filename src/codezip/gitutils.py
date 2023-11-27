@@ -16,6 +16,19 @@ def is_git_repo(path: "Pathlike") -> bool:
     return True
 
 
+def get_repo_base_dir(path: "Pathlike") -> "Optional[Pathlike]":
+    """Get the base directory of a Git repository."""
+
+    try:
+        base_dir = subprocess.check_output(
+            ["git", "rev-parse", "--show-toplevel"], cwd=path
+        )
+    except subprocess.CalledProcessError:
+        return None
+
+    return base_dir.decode("utf-8").strip()
+
+
 def is_ignored_by_git(file: "Pathlike", cwd: "Optional[Pathlike]" = None) -> bool:
     """Check if a file is ignored by Git."""
 
